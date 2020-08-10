@@ -40,7 +40,6 @@ T K V E 等泛型字母 为 有类型，类型参数赋予具体的值。
 
 例子:
 
-`
 
     public class Fruit {
 
@@ -61,14 +60,6 @@ T K V E 等泛型字母 为 有类型，类型参数赋予具体的值。
  	public void test(List<? super Apple> list){
         list.add(new Object());
     }
-
-
-
-
-`
-
-
-
 
 
 1.上界`<? extends T>` 不能往里存，只能往外取
