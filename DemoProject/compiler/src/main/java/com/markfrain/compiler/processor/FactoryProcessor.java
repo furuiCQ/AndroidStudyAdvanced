@@ -30,6 +30,10 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 
+/**
+ * 类名和MD中博客博主的项目一模一样是因为自己编写后发现无法build生成ShapeFactory。
+ * 故照搬代码发现，是gradle版本问题。
+ */
 @AutoService(Processor.class)
 public class FactoryProcessor extends AbstractProcessor {
     private Types typeUtils;

@@ -87,15 +87,11 @@ T K V E 等泛型字母 为 有类型，类型参数赋予具体的值。
 
 笔者从RxJava的几个常用操作符出发讲解泛型的转换。
 
-[https://zhuanlan.zhihu.com/p/97521402]
+[https://zhuanlan.zhihu.com/p/97521402] 
 
 
+[https://www.jianshu.com/p/c948329ebbf9]
 -------
-
-
-## Json解析泛型与Bean强转原理实践
-
-[待补充]*
 
 
 

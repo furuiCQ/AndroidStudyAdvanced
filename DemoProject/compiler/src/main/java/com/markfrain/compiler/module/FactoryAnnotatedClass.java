@@ -7,7 +7,10 @@ import com.markfrain.anntation.Factory;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.MirroredTypeException;
-
+/**
+ * 类名和MD中博客博主的项目一模一样是因为自己编写后发现无法build生成ShapeFactory。
+ * 故照搬代码发现，是gradle版本问题。
+ */
 public class FactoryAnnotatedClass {
     private TypeElement mAnnotatedClassElement;
     private String mQualifiedSuperClassName;
