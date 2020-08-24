@@ -863,6 +863,169 @@ public class CovariantReturn {
 ----
 
 
+## 接口
+
+### 抽象类和方法
+
+包含抽象方法的类叫做抽象类。如果一个类包含一个或多个抽象方法，那么类本身也必须限定为抽象的。讲一个类指明为abstract并不强制所有的方法都是抽象方法。
+
+```java
+	abstract class Basic{
+		abstract void f();
+		public String what(){
+			return "test info"
+		}
+	}
+```
+
+### 接口创建
+
+Java 8之前interface中只允许有抽象方法。
+Java 8之后允许接口包含默认方法和静态方法。
+
+```java
+	interface InterfaceDefault{
+		void firstMethod();
+		void secondMethod();
+		
+		default void defaultMethod(){
+			System.out.println("defaultMethod");
+		} 
+	}
+	public class Implemention implements InterfaceDefault{
+		@Override
+		public void firstMethod(){
+			System.out.println("firstMethod");
+		}
+		@Override
+		public void secondMethod(){
+			System.out.println("secondMethod");
+		}
+		public static void main(String[] args) {
+			InterfaceDefault i=new Implemention();
+			i.firstMethod();
+			i.secondMethod();
+			i.defaultMethod();
+		}
+	}
+
+	//输出结果
+	//firstMethod
+	//secondMethod
+	//defaultMethod
+
+```
+
+竟然实现接口的类没有定义`defaultMethod()`,但仍然可以使用`defaultMethod()`。
+
+这样可以保证不破坏已使用接口的代码的情况下，在接口中增加新的方法。默认方法有时也被称为守卫方法或虚拟拓展方法。
+
+
+### 多继承
+
+多继承意味着一个类可能从多个父类型中继承特征和特性。而Java不支持多继承
+
+### 接口中的静态方法
+
+Java 8允许在接口中添加静态方法。这么做能恰当地把工具功能置于接口中，从而操作接口，或者成为通用的工具。
+
+```java
+	public interface Operations{
+		void execute();
+		static void runOps(Operations...ops){
+			for (Operations op:ops ) {
+				op.execute();
+			}
+		}
+	}
+
+```
+
+
+### 抽象类和接口
+
+Java8引入default方法之后，选择用抽象类还是用接口变得更加令人困惑。下表做了明确的区分:
+
+|--|--|--|
+|特性|接口|抽象类|
+|组合|新类可以组合多个接口|只能继承单一抽象类|
+|状态|不能包含属性(除了静态属性,不支持对象状态)|必须在子类中实现抽象方法|
+|默认方法和抽象方法|不需要在子类中实现默认方法。默认方法可以引用其他接口方法|必须在子类实现抽象方法|
+|构造器|没有构造器|可以有构造器|
+|可见性|隐式public|可以是protected或包访问|
+
+总结:尽可能地抽象。因此更倾向使用接口而不是抽象类。
+
+### 完全解耦
+
+使用接口可以编写复用性更好的代码。
+
+### 使用继承扩展接口
+
+### 结合接口时的命名冲突
+
+当打算组合接口时，在不同的接口中使用相同的方法名通常会造成代码可读性的混乱，尽量避免这种情况。
+
+### 接口字段
+
+接口中的字段都是自动为static和final的。所以接口就成为了创建一组常量的方便的工具。但是Java 5开始出现了enum。那么常量组就可以用enum来编写。
+
+### 初始化接口中的字段
+
+由于定义额字段不能为非fianl。则可以使用非常量表达式初始化。
+
+```java
+	public interface RandVals{
+		Random RAND=new Random(47);
+		int RANDOM_INT=RAND。nextInt(10);
+	}
+```
+
+### 接口和工厂方法模式
+
+```java
+
+	interface Service{
+		void method1();
+	}
+	interface ServiceFactory{
+		Service getService();
+	}
+
+	class ServiceImp implements Service{
+		@Override
+		public void method1(){
+			System.out.println("ServiceImp method1");
+		}
+	}
+
+	public class Factories{
+		public static void serviceConsumer(ServiceFactory fact){
+			Service s=fact.getService();
+			s.method1;
+
+		}
+		public static void main(String[] args) {
+			serviceConsumer(new ServiceFactory());
+		}
+	}
+
+```
+
+
+### 本章小结
+
+恰当的原则是优先使用类而不是接口。从类开始，如果使用接口的必要性变得很明确，那么就重构。接口是一个伟大的工具，但它们容易被滥用。
+
+----
+
+## 内部类
+
+
+
+
+
+
 
 
 
