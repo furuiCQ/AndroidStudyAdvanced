@@ -1021,7 +1021,184 @@ Java8引入default方法之后，选择用抽象类还是用接口变得更加�
 
 ## 内部类
 
+一个定义在另一个类中的类,叫做内部类。
+内部类与组合是完全不同的概念。内部类可以与外部类进行通信(Java 8的Lambda表达式和方法引用减少了编写内部类的需求)。
 
+### 创建内部类
+
+```java
+
+	OuterClassName.InnerClassName clazzName=new OuterClassName.InnerClassName();
+
+	OuterClassName outClazz=new OuterClassName();
+
+	OuterClassName.InnerClassName clazzName1=outClazz.new InnerClassName();
+
+```
+
+内部类的对象只能在与其外部类的对象相关联的情况下才能被创建。构建内部类对象时,需要一个指向其外部类对象的引用,如果编译器访问不到换个引用就会报错。
+
+
+### 内部类与向上转型
+
+private内部类给类的设计者提供了一种途径，通过这种方式可以完全阻止任何依赖于类型的编码,并且完全隐藏了实现的细节。
+
+### 内部类方法和作用域
+
+#### 局部内部类
+
+```java
+	public class Parcel5 {
+	    public Destination destination(String s) {
+	        final class PDestination implements Destination {
+	            private String label;
+	          
+	            private PDestination(String whereTo) {
+	                label = whereTo;
+	            }
+	          
+	            @Override
+	            public String readLabel() { return label; }
+	        }
+	        return new PDestination(s);
+	    }
+	  
+	    public static void main(String[] args) {
+	        Parcel5 p = new Parcel5();
+	        Destination d = p.destination("Tasmania");
+	    }
+	}
+
+```
+
+#### 嵌套类
+
+如果不需要内部类对象与外部类对象之间有联系，那么可以将内部类声明为static,这通常称为嵌套类。想要理解static应用于内部类时的含义,就必须记住,普通的内部类对象隐式第保存了一个引用，指向创建它的外部类对象。然而,当内部类是static时，就不是这样了。嵌套类意味着:
+
+1.要创建嵌套类的对象,并不需要其外部类的对象。
+2.不能从嵌套类的对象中访问非静态的外部类对象。
+
+### 为什么需要内部类
+
+每个内部类都能独立第继承自一个(接口的)实现，所以无论外部类是否已经继承了某个(接口的)实现，对于内部类都没有影响。
+
+### 闭包与回调
+
+内部类是面向对象的闭包，因为它不仅包含外部类对象(创建内部类的作用域)的信息，还自动拥有一个指向此外部类对象的引用，内部类有权操作所有的成员包含private成员。
+
+Java8之前，内部类是实现闭包的唯一方式。Java8中，我们可以使用lambda表达式来实现闭包行为。
+
+### 内部类可以被覆盖吗
+
+内部类如果要覆盖必须完整继承所要覆盖的内部类。否则对于编译器来说即使你命名的是2个同名的内部类，但是编译后是完全2个独立的实体。
+
+```java
+
+class Egg2 {
+    protected class Yolk {
+        public Yolk() {
+            System.out.println("Egg2.Yolk()");
+        }
+        public void f() {
+            System.out.println("Egg2.Yolk.f()");
+        }
+    }
+    private Yolk y = new Yolk();
+    Egg2() { System.out.println("New Egg2()"); }
+    public void insertYolk(Yolk yy) { y = yy; }
+    public void g() { y.f(); }
+}
+public class BigEgg2 extends Egg2 {
+    //继承后覆盖才能取代原有内部类
+    public class Yolk extends Egg2.Yolk {
+        public Yolk() {
+            System.out.println("BigEgg2.Yolk()");
+        }
+        @Override
+        public void f() {
+            System.out.println("BigEgg2.Yolk.f()");
+        }
+    }
+    public BigEgg2() { insertYolk(new Yolk()); }
+    public static void main(String[] args) {
+        Egg2 e2 = new BigEgg2();
+        e2.g();
+    }
+}
+
+```
+
+
+### 局部内部类
+
+在方法作用域内定义的内部类。
+
+
+### 内部类标识符
+
+内部类文件生产的.class文件。
+这些类文件的命名有严格的规则：外部类的名字，加上“$"，再加上内部类的名字。例如，LocalInnerClass.java 生成的 .class 文件包括：
+
+```java
+interface Counter {
+    int next();
+}
+public class LocalInnerClass {
+    private int count = 0;
+    Counter getCounter(final String name) {
+        // A local inner class:
+        class LocalCounter implements Counter {
+            LocalCounter() {
+                // Local inner class can have a constructor
+                System.out.println("LocalCounter()");
+            }
+            @Override
+            public int next() {
+                System.out.print(name); // Access local final
+                return count++;
+            }
+        }
+        return new LocalCounter();
+    }
+    // Repeat, but with an anonymous inner class:
+    Counter getCounter2(final String name) {
+        return new Counter() {
+            // Anonymous inner class cannot have a named
+            // constructor, only an instance initializer:
+            {
+                System.out.println("Counter()");
+            }
+            @Override
+            public int next() {
+                System.out.print(name); // Access local final
+                return count++;
+            }
+        };
+    }
+    public static void main(String[] args) {
+        LocalInnerClass lic = new LocalInnerClass();
+        Counter
+                c1 = lic.getCounter("Local inner "),
+                c2 = lic.getCounter2("Anonymous inner ");
+        for(int i = 0; i < 5; i++)
+            System.out.println(c1.next());
+        for(int i = 0; i < 5; i++)
+            System.out.println(c2.next());
+    }
+}
+
+Counter.class//Counter interface
+LocalInnerClass$1.class //getCounter2中的匿名内部类、这里叫1
+LocalInnerClass$LocalCounter.class//局部方法内部类
+LocalInnerClass.class//外部类
+```
+
+如果内部类是匿名的，编译器会简单地产生一个数字作为其标识符。如果内部类是嵌套在别的内部类之中，只需直接将它们的名字加在其外部类标识符与“$”的后面。
+
+
+#### 个人总结
+
+内部类可以用于不对外开放的类的实现。保证了代码的安全性。
 
 
 
