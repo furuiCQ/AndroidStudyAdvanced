@@ -1294,12 +1294,267 @@ for-in适用于Collection对象。
 
 ## 函数式编程
 
+函数式变成的意义:通过合并现有代码生成新功能而不是从头开始编写所有内容,我们可以更快的获得可靠的代码。
+
+OO是抽象数据,FP是抽象行为。
+
+Java 8的Lambda表达式，其参数和函数体被箭头`->`分隔开。箭头右侧是从Lambda返回的表达式。
+
+Java8的方法引用，它以`::`为特征。`::`的左边是类或对象的名称,`::`的右边是方法的名称，但是没有参数列表。
+
+### Lambda表达式
+
+Lambda表达式是使最小可能语法编写的函数定义:
+1.Lambda表达式产生函数，而不是类。 在 JVM（Java Virtual Machine，Java 虚拟机）上，一切都是一个类，因此在幕后执行各种操作使 Lambda 看起来像函数 —— 但作为程序员，你可以高兴地假装它们“只是函数”。
+
+2.Lambda语法尽可能少，这正是为了使Lambda易于编写和实用。
+
+```java
+	interface Description{
+		String brief();
+	}
+	interface Body{
+		String detailed(String head);
+	}
+	interface Multi{
+		String twoArg(String head,Double b);
+	}
+
+	public class LambdaExpressions{
+
+		static Body bod=h->h+"No Parens";//[1]
+		static Body bod2=(h)->h+"More details";//[2]
+		static Description desc=()->"short info";//[3]
+		static Multi mult=(h,n)->h+n;//[4]
+
+		static Description moreLines=()->{
+			System.out.println("moreLines()");
+			return "from moreLines()";
+		}
+
+		public static void main(String[] args) {
+			System.out.println(bod.detailed("Oh!"));
+		    System.out.println(bod2.detailed("Hi!"));
+		    System.out.println(desc.brief());
+		    System.out.println(mult.twoArg("Pi! ", 3.14159));
+		    System.out.println(moreLines.brief());
+		}
+	}
+
+	//Lambda表达式的基本语法是：
+	//1.参数
+	//2.接着->,可以视为"产出"
+	//3.->之后的内容都是方法体
+	//[1]当只有一个参数可以不需要括号
+	//[2]也可以用()包裹单个参数
+	//[3]没有参数使用()代表空参数列表
+	//[4]多个参数按照顺序放在()中。
+	//[5]多行代码放在花括号中。这种情况下需要使用return.
+
+```
+
+### 递归
+
+递归函数是一个自我调用的函数。
+
+### 方法引用
+
+方法引用组成:类名或对象名，后面跟`::`,然后跟方法名称。
+
+
+### 未绑定的方法引用
+
+未绑定的方法引用是指没有关联对象的普通(非静态)方法。使用未绑定的引用时，我们必须先提供对象.
+
+### 构造函数引用
 
 
 
+```java
+class Dog {
+  String name;
+  int age = -1; // For "unknown"
+  Dog() { name = "stray"; }
+  Dog(String nm) { name = nm; }
+  Dog(String nm, int yrs) { name = nm; age = yrs; }
+}
+
+interface MakeNoArgs {
+  Dog make();
+}
+
+interface Make1Arg {
+  Dog make(String nm);
+}
+
+interface Make2Args {
+  Dog make(String nm, int age);
+}
+
+public class CtorReference {
+  public static void main(String[] args) {
+    MakeNoArgs mna = Dog::new; // [1]
+    Make1Arg m1a = Dog::new;   // [2]
+    Make2Args m2a = Dog::new;  // [3]
+
+    Dog dn = mna.make();
+    Dog d1 = m1a.make("Comet");
+    Dog d2 = m2a.make("Ralph", 4);
+  }
+}
+//[1][2][3]编译器将根据赋值的对象不同找到不同的构造函数来实现。
+
+```
+
+### 函数式接口
+
+如果将方法引用或 Lambda 表达式赋值给函数式接口（类型需要匹配），Java 会适配你的赋值到目标接口。 编译器会在后台把方法引用或 Lambda 表达式包装进实现目标接口的类的实例中。
 
 
+## TODO 
 
+----
+
+## TODO 流式编程
+
+----
+
+## 异常
+
+### 抛出异常
+
+```java
+	if(t==null){
+		throw new NullPointerException();
+	}
+```
+
+### 异常捕获
+
+```java
+
+try{
+	//code mit generate exceptions
+}catch(Type1 tyde1){
+	//handle exceptions of Type1
+}catch(Type2 tyde2){
+	//handle exceptions of Type2
+}
+
+```
+
+### 自定义异常
+
+继承于Exception类,命令与发生的异常意思相近或一致。
+
+```java
+
+class SimpleException extends Exception{
+	SimpleException(){}
+	SimpleException(String msg){
+		super(msg);
+	}
+}
+
+public class Test{
+	public void test() throws SimpleException{
+		System.out.println("SimpleException from test()");
+		throw new SimpleException();
+	}
+	public static void main(String[] args) {
+		Test test=new Test();
+		try{
+			test.test();
+		}catch(SimpleException e){
+			System.out.println("Caught it");
+		}
+	}
+}
+
+```
+
+### 异常声明
+
+编译时被强制检查的异常成为被检查的异常。
+编译时异常。
+
+### 栈轨迹
+
+printStackTrace()方法提供的信息可以通过getStackTrace()方法来直接访问。
+
+### 重新抛出异常
+
+有时希望把刚捕获的异常重新抛出，尤其是在使用 Exception 捕获所有异常的时候。既然已经得到了对当前异常对象的引用，可以直接把它重新抛出：
+
+```java
+	catch(Exception e){
+		throw e;
+	}
+```
+
+重抛异常会把异常抛给上级环境中的异常处理程序。
+
+
+### RuntimeException
+
+1.无法预料的错误。比如引用为null.
+2.作为程序员，应该在代码中进行检查的错误，比如数组越界ArrayIndexOutOfBoundsException。
+
+
+### finally
+
+```java
+
+	try {
+	// The guarded region: Dangerous activities
+	// that might throw A, B, or C
+	} catch(A a1) {
+	// Handler for situation A
+	} catch(B b1) {
+	// Handler for situation B
+	} catch(C c1) {
+	// Handler for situation C
+	} finally {
+	// Activities that happen every time
+	}
+```
+
+finnally可以把一些打开的资源进行关闭，比如文件流，网络连接等。
+
+
+### 异常匹配
+
+抛出异常时，异常处理系统会按照代码的书写顺序找出"最近"的处理程序。
+
+### 异常指南
+
+1.尽可能使用 try-with-resource。
+2.在恰当的级别处理问题。（在知道该如何处理的情况下才捕获异常。）
+3.解决问题并且重新调用产生异常的方法。
+4.进行少许修补，然后绕过异常发生的地方继续执行。
+5.用别的数据进行计算，以代替方法预计会返回的值。
+6.把当前运行环境下能做的事情尽量做完，然后把相同的异常重抛到更高层。
+7.把当前运行环境下能做的事情尽量做完，然后把不同的异常抛到更高层。
+8.终止程序。
+9.进行简化。（如果你的异常模式使问题变得太复杂，那用起来会非常痛苦也很烦人。）
+10.让类库和程序更安全。（这既是在为调试做短期投资，也是在为程序的健壮性做长期投资。）
+
+----
+
+## 代码校验 TODO
+
+----
+
+## 文件
+
+### 文件和目录路径
+
+java.nio.file.Paths类包含一个重载方法static get(),该方法接受一系列String字符串或一个统一资源标识符(URI)作为参数,并且返回一个Path对象。
+
+
+TODO Java NIO。
+
+----
 
 
 
